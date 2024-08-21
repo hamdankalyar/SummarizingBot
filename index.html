@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Summarizing Bot</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <div id="upload-container" class="upload-container">
+        <h2>Upload file</h2>
+        <div class="upload-box">
+            <label for="file-upload">
+                <div class="upload-icon">
+                    <!-- <img src="upload-icon.png" alt="Upload Icon" /> -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24">
+                        <path fill="currentColor"
+                            d="M11 16V7.85l-2.6 2.6L7 9l5-5l5 5l-1.4 1.45l-2.6-2.6V16zm-7 4v-5h2v3h12v-3h2v5z" />
+                    </svg>
+                </div>
+                <div class="upload-text">
+                    <span id="file-name">Drop any document here to get started</span>
+                    <p class="supported-formats">Supported formats: .pdf, .docx</p>
+                </div>
+            </label>
+            <input type="file" id="file-upload" accept=".pdf, .docx" />
+            <button id="remove-file" class="remove-file-button" style="display:none;">✖</button>
+        </div>
+        <div class="text-area-container">
+            <label for="text-input">Or</label>
+            <textarea id="text-input" placeholder="Type or paste your text here..."></textarea>
+        </div>
+        <button id="summarize-button" class="summarize-button">Summarize</button>
+    </div>
+
+    <div id="summary-container" class="summary-container" style="display:none;">
+        <div class="tab-container">
+            <button class="tab-button active" onclick="openTab(event, 'bullet-points')">Bullet points 🎯</button>
+            <button class="tab-button" onclick="openTab(event, 'custom-summary')">Custom summary ⚡</button>
+            <button class="tab-button" onclick="openTab(event, 'tldr')">TL;DR 🚀</button>
+            <button class="tab-button" onclick="openTab(event, 'detailed')">Detailed 📝</button>
+        </div>
+
+        <div id="bullet-points" class="tab-content" style="display: block;">
+
+            <p>hello</p>
+        </div>
+
+        <div id="custom-summary" class="tab-content">
+            <p>This is the custom summary content.</p>
+        </div>
+
+        <div id="tldr" class="tab-content">
+            <p>This is the TL;DR content.</p>
+        </div>
+
+        <div id="detailed" class="tab-content">
+            <p>This is the detailed content.</p>
+        </div>
+    </div>
+    <!-- Include PDF-lib CDN -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+    <!-- Include Mammoth.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
