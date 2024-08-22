@@ -85,12 +85,13 @@ const uploadText = localStorage.getItem('uploadedText'); // Get the text from lo
 const cachedResponses = {}; // Object to store responses
 
 
-async function callOpenAiApi(prompt) {
+async function callOpenAiApi(prompt, loaderId) {
     let final = [{
         role: "user",
         content: prompt
     }]
     try {
+        document.getElementById(loaderId).style.display = 'block'; // Show loader
         const response = await fetch('https://api.openai.com/v1/chat/completions', {
             method: 'POST',
             headers: {
@@ -112,6 +113,8 @@ async function callOpenAiApi(prompt) {
     } catch (error) {
         console.error('Error calling OpenAI API:', error);
         return 'Error retrieving summary';
+    } finally {
+        document.getElementById(loaderId).style.display = 'none'; // Hide loader
     }
 }
 
@@ -119,14 +122,15 @@ async function callOpenAiApi(prompt) {
 document.getElementById('summarize-button').addEventListener('click', async function () {
     document.getElementById('upload-container').style.display = 'none';
     document.getElementById('summary-container').style.display = 'block';
-
-    // Send the first prompt to OpenAI for the first tab
+    document.getElementById('new-summary-text').style.display = 'block'; // Show "Write a new summary" text
     const prompt = `Summarize the following text in bullet points:\n\n${uploadText}`;
-    const response = await callOpenAiApi(prompt);
-    document.getElementById('bullet-points').innerHTML = `<ul><li>${response.replace(/\n/g, '</li><li>')}</li></ul>`;
+    const response = await callOpenAiApi(prompt, 'loader-bullet-points');
+    document.getElementById('bullet-points').querySelector('p').innerHTML = response.replace(/\n/g, '<br>');
 
-    cachedResponses['bullet-points'] = response; // Cache the response
+    cachedResponses['bullet-points'] = document.getElementById('bullet-points').querySelector('p').innerHTML; // Cache the response
 });
+
+
 
 // Function to handle tab switching and lazy load API responses
 function openTab(evt, tabName) {
@@ -150,9 +154,10 @@ function openTab(evt, tabName) {
 
     // Check if we already have a cached response for this tab
     if (cachedResponses[tabName]) {
-        document.getElementById(tabName).innerHTML = cachedResponses[tabName];
+        document.getElementById(tabName).querySelector('p').innerHTML = cachedResponses[tabName];
     } else {
         let prompt;
+        let loaderId = `loader-${tabName}`;
         switch (tabName) {
             case 'custom-summary':
                 prompt = `Create a custom summary of the following text:\n\n${uploadText}`;
@@ -167,10 +172,66 @@ function openTab(evt, tabName) {
 
         // Only make the API call if the prompt is defined (i.e., not the bullet points tab)
         if (prompt) {
-            callOpenAiApi(prompt).then(response => {
-                document.getElementById(tabName).innerHTML = `<p>${response.replace(/\n/g, '<br>')}</p>`;
-                cachedResponses[tabName] = document.getElementById(tabName).innerHTML; // Cache the response
+            callOpenAiApi(prompt, loaderId).then(response => {
+                document.getElementById(tabName).querySelector('p').innerHTML = response.replace(/\n/g, '<br>');
+                cachedResponses[tabName] = document.getElementById(tabName).querySelector('p').innerHTML; // Cache the response
             });
         }
     }
 }
+
+// --------------------------- action buttons functions 
+// Function to copy the text from the specified tab
+function copyText(tabId) {
+    const tabContent = document.getElementById(tabId).querySelector(' p').innerText;
+    navigator.clipboard.writeText(tabContent).then(() => {
+        alert('Text copied to clipboard');
+    }).catch(err => {
+        console.error('Error copying text: ', err);
+    });
+}
+
+// Function to download the text from the specified tab
+function downloadText(tabId, filename) {
+    const tabContent = document.getElementById(tabId).querySelector(' p').innerText;
+    const blob = new Blob([tabContent], { type: 'text/plain' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    link.click();
+    URL.revokeObjectURL(link.href); // Clean up the URL object after download
+}
+
+
+
+
+
+// Function to reset everything when "Write a new summary" is clicked
+document.getElementById('new-summary-text').addEventListener('click', function () {
+    // Clear all p tag contents in the tabs
+    const tabs = ['bullet-points', 'custom-summary', 'tldr', 'detailed'];
+    tabs.forEach(tab => {
+        document.getElementById(tab).querySelector('p').innerHTML = '';
+    });
+
+    // Reset localStorage
+    localStorage.removeItem('uploadedText');
+
+    // Hide summary container and "New Summary" text
+    document.getElementById('summary-container').style.display = 'none';
+    document.getElementById('new-summary-text').style.display = 'none';
+
+    // Show the upload container
+    document.getElementById('upload-container').style.display = 'block';
+
+    // Reset the upload file input and textarea
+    document.getElementById('file-upload').value = '';
+    document.getElementById('text-input').value = '';
+
+    // Clear cached responses
+    for (let key in cachedResponses) {
+        if (cachedResponses.hasOwnProperty(key)) {
+            delete cachedResponses[key];
+        }
+    }
+});

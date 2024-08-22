@@ -46,22 +46,47 @@
         </div>
 
         <div id="bullet-points" class="tab-content" style="display: block;">
-
-            <p>hello</p>
+            <div class="loader" id="loader-bullet-points"></div>
+            <p></p>
+            <div class="action-buttons">
+                <button class="copy-button" onclick="copyText('bullet-points')">Copy</button>
+                <button class="download-button"
+                    onclick="downloadText('bullet-points', 'BulletPointsSummary.txt')">Download</button>
+            </div>
         </div>
 
         <div id="custom-summary" class="tab-content">
-            <p>This is the custom summary content.</p>
+            <div class="loader" id="loader-custom-summary"></div>
+            <p></p>
+            <div class="action-buttons">
+                <button class="copy-button" onclick="copyText('custom-summary')">Copy</button>
+                <button class="download-button"
+                    onclick="downloadText('custom-summary', 'CustomSummary.txt')">Download</button>
+            </div>
         </div>
 
         <div id="tldr" class="tab-content">
-            <p>This is the TL;DR content.</p>
+            <div class="loader" id="loader-tldr"></div>
+            <p></p>
+            <div class="action-buttons">
+                <button class="copy-button" onclick="copyText('tldr')">Copy</button>
+                <button class="download-button" onclick="downloadText('tldr', 'TLDRSummary.txt')">Download</button>
+            </div>
         </div>
 
         <div id="detailed" class="tab-content">
-            <p>This is the detailed content.</p>
+            <div class="loader" id="loader-detailed"></div>
+            <p></p>
+            <div class="action-buttons">
+                <button class="copy-button" onclick="copyText('detailed')">Copy</button>
+                <button class="download-button"
+                    onclick="downloadText('detailed', 'DetailedSummary.txt')">Download</button>
+            </div>
         </div>
     </div>
+    <p id="new-summary-text"
+        style="display:none; cursor: pointer; color: #007BFF; text-align: center; margin-top: 20px;">Write a new summary
+    </p>
     <!-- Include PDF-lib CDN -->
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
